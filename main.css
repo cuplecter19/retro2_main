@@ -524,3 +524,32 @@ video.admin-preview-img {
   .admin-panel-modal { width: calc(100vw - 20px); margin: 10px auto; }
   .admin-panel-modal .admin-panel-body { max-height: calc(100vh - 84px); }
 }
+
+/* ══════════════════════════════════════════════
+   모바일 반응형 (768px 이하)
+══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* 가로 스크롤 제거 */
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  #retro-main-wrapper {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* 패럴랙스 이미지를 모바일 뷰포트 내에 맞춤 */
+  .parallax-global-layer > img {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    object-fit: contain !important;
+  }
+
+  /* 최신글·배너 윈도우 및 오버레이 숨김 */
+  #retro-latest-window,
+  #retro-banner-window,
+  #retro-window-overlay {
+    display: none !important;
+  }
+}
