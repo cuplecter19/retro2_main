@@ -334,8 +334,7 @@
       'parallax-bg-layer': 0.01
     };
 
-    function updateParallax(clientX, clientY) {
-      var centerX = window.innerWidth / 2;
+    function updateParallax(clientX, clientY) {      var centerX = window.innerWidth / 2;
       var centerY = window.innerHeight / 2;
       var deltaX = clientX - centerX;
       var deltaY = clientY - centerY;
@@ -359,15 +358,19 @@
     }
 
     var rafPending = false;
-    $(document).on('mousemove.parallax', function (e) {
-      if (rafPending) return;
-      var cx = e.clientX, cy = e.clientY;
-      rafPending = true;
-      requestAnimationFrame(function () {
-        updateParallax(cx, cy);
-        rafPending = false;
+    /* 모바일(터치) 환경에서는 마우스 패럴랙스 비활성화 */
+    var isMobile = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window);
+    if (!isMobile) {
+      $(document).on('mousemove.parallax', function (e) {
+        if (rafPending) return;
+        var cx = e.clientX, cy = e.clientY;
+        rafPending = true;
+        requestAnimationFrame(function () {
+          updateParallax(cx, cy);
+          rafPending = false;
+        });
       });
-    });
+    }
   }
 
   /* ══════════════════════════════════════════════

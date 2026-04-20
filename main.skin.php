@@ -24,6 +24,7 @@ $custom_font_css = main_skin_render_font_faces();
 /* 사용 중인 커스텀 폰트만 preload */
 echo main_skin_render_font_preloads();
 ?>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap"></noscript>
 <?php if ($custom_font_css) { ?>
