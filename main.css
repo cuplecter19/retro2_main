@@ -1,0 +1,526 @@
+/* VT323 폰트는 main.skin.php에서 preload로 로딩합니다 */
+
+:root {
+  --win95-bg: #c0c0c0;
+  --win95-dark: #808080;
+  --win95-light: #dfdfdf;
+  --win95-white: #fff;
+  --win95-blue: #000080;
+  --win95-blue-grad: #1084d0;
+  --retro-shadow: rgba(0,0,0,.18);
+  --retro-admin-z: 40;
+  --retro-modal-z: 1000;
+  --font-retro: 'VT323', 'MS Sans Serif', Arial, sans-serif;
+  --font-ui: Arial, 'MS Sans Serif', sans-serif;
+}
+
+/* ══════════════════════════════════════════════
+   전체 래퍼
+══════════════════════════════════════════════ */
+#retro-main-wrapper {
+  position: relative;
+  min-height: 900px;
+  background: none;
+}
+
+/* ══════════════════════════════════════════════
+   배경 이미지 컨테이너 (700×850, 중앙)
+   ※ overflow:visible → 자식 윈도우가 밖으로 나갈 수 있음
+   ※ 이 요소가 stacking context 루트
+══════════════════════════════════════════════ */
+#retro-bg-container {
+  position: relative;
+  width: 700px;
+  height: 850px;
+  overflow: visible;
+  margin: 0 auto 0;
+  z-index: 3;
+}
+
+/* ── 배경 미디어 (최하위 레이어) ── */
+.retro-bg-media {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+}
+.bg-fit-cover   { object-fit: cover; }
+.bg-fit-contain { object-fit: contain; object-position: center; }
+.bg-fit-original { object-fit: none; object-position: center top; }
+
+/* ══════════════════════════════════════════════
+   텍스트 오버레이
+   ※ z-index:5 → 배경(0) 위, 윈도우(10) 아래
+   ※ position:absolute 는 인라인 style로 부여됨
+══════════════════════════════════════════════ */
+
+.retro-text-behind-bg {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  white-space: pre-wrap;
+}
+
+.retro-text-overlay {
+  position: absolute;      /* CSS에서도 명시 (인라인 style 백업) */
+  pointer-events: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  width: max-content;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.retro-text-overlay:not(.retro-text-behind-bg) {
+  z-index: 5;
+}
+
+.retro-text-overlay.retro-text-title1[style*="scaleY"] {
+  /* 인라인 style에서 transform을 직접 지정하므로 CSS의 transform 제거 */
+}
+
+.retro-text-overlay.retro-text-title1 {
+  transform: rotate(-90deg);
+  transform-origin: left top;
+  max-width: 850px;          /* 컨테이너 세로 길이 = 회전 후 가로 한계 */
+  white-space: normal;        /* pre-wrap 대신 일반 줄바꿈 허용 */
+  word-break: break-all;
+}
+
+/* 날짜 위젯도 반응형 위치 */
+.retro-date-widget {
+  position: absolute;
+  z-index: 3;
+}
+
+/* title2~general: 우측 기준 배치 */
+.retro-text-overlay.retro-text-title2,
+.retro-text-overlay.retro-text-title3,
+.retro-text-overlay.retro-text-title3_body,
+.retro-text-overlay.retro-text-general {
+  right: 0;
+  left: auto !important;      /* 인라인 left 무시, right 기준으로 전환 */
+}
+
+/* ══════════════════════════════════════════════
+   레트로 윈도우 (공통 스타일)
+══════════════════════════════════════════════ */
+.win95-window {
+  background: var(--win95-bg);
+  border: 2px solid;
+  border-color: var(--win95-light) var(--win95-dark) var(--win95-dark) var(--win95-light);
+  box-sizing: border-box;
+  font-family: var(--font-ui);
+}
+.win95-titlebar {
+  background: linear-gradient(to right, var(--win95-blue), var(--win95-blue-grad));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.win95-title-text {
+  flex: 1;
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.win95-buttons { display: flex; gap: 2px; }
+.win95-btn,
+.win95-action-btn,
+.admin-tab,
+.admin-item-actions select {
+  background: var(--win95-bg);
+  border: 1px solid;
+  border-color: var(--win95-light) var(--win95-dark) var(--win95-dark) var(--win95-light);
+  font-family: var(--font-ui);
+}
+.win95-btn {
+  width: 16px; height: 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #000; font-size: 10px;
+}
+.win95-action-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════════════════
+   독립 윈도우 (최신글 / 배너)
+══════════════════════════════════════════════ */
+
+.win95-standalone-window {
+  box-shadow: 0 12px 28px rgba(0,0,0,.22);
+}
+
+.retro-draggable-window.is-win-dragging {
+  opacity: .88;
+}
+.retro-draggable-window.is-win-dragging .win95-titlebar {
+  cursor: grabbing;
+}
+
+/* 최신글 윈도우 */
+#retro-latest-window {
+  width: 260px;
+}
+
+/* 배너 윈도우 */
+#retro-banner-window {
+  width: 220px;
+}
+
+.win95-inner-border {
+  margin: 4px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid;
+  border-color: var(--win95-dark) var(--win95-light) var(--win95-light) var(--win95-dark);
+  box-sizing: border-box;
+}
+.win95-banner-inner {
+  min-width: 200px;
+}
+
+/* ── 최신글 리스트 ── */
+.win95-post-list { margin: 0; padding: 0; list-style: none; }
+.win95-post-item {
+  position: relative;
+  height: 28px;
+  overflow: hidden;
+  border-bottom: 1px dotted #ccc;
+}
+.win95-post-item:last-child { border-bottom: none; }
+.win95-post-item:hover { background: var(--win95-blue); }
+.win95-post-link {
+  display: block;
+  position: relative;
+  width: 100%; height: 100%;
+  text-decoration: none;
+  color: #000;
+}
+.win95-post-item:hover .win95-post-link { color: #fff; }
+.win95-post-front {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 6px; width: 100%; height: 28px; padding: 0 4px; box-sizing: border-box;
+  position: absolute; top: 0; left: 0;
+  opacity: 1; transform: translateY(0);
+  transition: opacity .3s ease, transform .3s ease;
+}
+.win95-post-subject {
+  flex: 1 1 0; min-width: 0; font-size: 12px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.win95-post-date {
+  flex-shrink: 0; font-size: 11px; opacity: .65; white-space: nowrap;
+}
+.win95-post-back {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 28px; padding: 0 4px; box-sizing: border-box;
+  position: absolute; top: 0; left: 0;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .3s ease, transform .3s ease;
+  color: #000;
+}
+.win95-post-item:hover .win95-post-back { color: #fff; }
+.win95-post-name { font-size: 12px; letter-spacing: .5px; }
+.win95-post-item:hover .win95-post-front {
+  opacity: 0; transform: translateY(-10px);
+}
+.win95-post-item:hover .win95-post-back {
+  opacity: 1; transform: translateY(0);
+}
+.win95-no-posts { margin: 6px 0; color: #777; font-size: 12px; }
+.win95-no-posts-empty { padding: 8px 0; }
+
+/* ── 배너 ── */
+.win95-banner-area { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.banner-link { display: inline-block; max-width: 100%; border: 1px solid #ccc; background: #fff; }
+.banner-img { width: 100%; height: auto; display: block; }
+
+/* ══════════════════════════════════════════════
+   스티커
+══════════════════════════════════════════════ */
+#retro-sticker-overlay { position: absolute; inset: 0; z-index: 15; pointer-events: none; }
+.retro-sticker { position: absolute; pointer-events: none; display: inline-block; }
+.retro-sticker img { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
+.retro-sticker.admin-sticker.sticker-edit-mode { pointer-events: auto; cursor: grab; }
+.retro-sticker.admin-sticker.sticker-edit-mode.is-dragging { cursor: grabbing; opacity: .84; }
+.sticker-handles { display: none; }
+.sticker-edit-mode .sticker-handles { display: block; }
+.sticker-zup-btn,
+.sticker-zdown-btn {
+  position: absolute; top: -20px; width: 18px; height: 16px; padding: 0;
+  background: var(--win95-bg);
+  border: 1px solid;
+  border-color: var(--win95-light) var(--win95-dark) var(--win95-dark) var(--win95-light);
+  cursor: pointer; font-size: 9px; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center; z-index: 2;
+}
+.sticker-zup-btn   { left: 0; }
+.sticker-zdown-btn { left: 20px; }
+.sticker-del-btn {
+  position: absolute; top: -10px; right: -10px;
+  width: 20px; height: 20px;
+  border: 1px solid #7d0000; border-radius: 50%;
+  background: #ff4d4d; color: #fff; cursor: pointer;
+  font-size: 12px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center; z-index: 2;
+}
+.sticker-rotate-handle {
+  position: absolute; top: -26px; left: 50%; transform: translateX(-50%);
+  width: 16px; height: 16px;
+  background: #4fc3f7; border: 2px solid #0288d1; border-radius: 50%;
+  cursor: grab; z-index: 2;
+}
+.sticker-rotate-handle:active { cursor: grabbing; }
+.sticker-resize-handle {
+  position: absolute; bottom: -6px; right: -6px;
+  width: 14px; height: 14px;
+  background: var(--win95-bg); border: 2px solid var(--win95-dark);
+  cursor: se-resize; z-index: 2; box-sizing: border-box;
+}
+
+/* ══════════════════════════════════════════════
+   패럴랙스
+══════════════════════════════════════════════ */
+/*
+ * .parallax-layer 기존 규칙을 완전히 무력화하기 위해
+ * 높은 specificity + !important 사용
+ */
+.parallax-global-layer.parallax-layer,
+.parallax-global-layer {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    /* 부모 stacking context 탈출 보장 */
+    contain: none !important;
+    transform: none !important;
+    will-change: auto !important;
+}
+
+.parallax-global-layer > img {
+    position: absolute !important;
+    max-width: none !important;
+    transition: transform 0.15s ease-out;
+}
+
+/* z-index 레이어링 */
+#parallax-bg-layer.parallax-global-layer {
+    z-index: -1 !important;
+}
+#parallax-ng-layer.parallax-global-layer {
+    z-index: 999 !important;
+}
+#parallax-fg-layer.parallax-global-layer {
+    z-index: 500 !important;
+}
+
+/* 헤더/바디/푸터는 bg 위, ng 아래 */
+#header,
+#body,
+#footer,
+.fix-layout {
+    position: relative;
+    z-index: 2;
+
+/* ═══════════════════════════════════════════════
+   잡지 날짜 위젯
+═══════════════════════════════════════════════ */
+.retro-date-widget {
+    position: absolute;
+    z-index: 15;
+    text-align: right;
+    line-height: 1.1;
+}
+
+.date-widget-issue {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+}
+
+.date-widget-pub {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-top: 4px;
+    opacity: 0.85;
+}
+
+.date-widget-pub::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+    margin: 6px 0 6px auto;
+}
+
+.date-widget-clock {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    margin-top: 6px;
+    opacity: 0.65;
+    font-variant-numeric: tabular-nums;
+}
+
+}/* ══════════════════════════════════════════════
+   관리자 버튼 / 모달
+══════════════════════════════════════════════ */
+
+#retro-admin-buttons {
+    position: relative;
+    z-index: 600;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 0;
+    /* ── 추가: 패럴랙스 레이어(z-index 500) 위에 확실히 표시 ── */
+    pointer-events: auto;
+}
+
+#retro-admin-buttons .win95-action-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; font-weight: bold;
+}
+#retro-sticker-edit-btn.active {
+  background: var(--win95-blue); color: #fff;
+  border-color: var(--win95-blue-grad) var(--win95-dark) var(--win95-dark) var(--win95-blue-grad);
+}
+
+.admin-modal { position: fixed; inset: 0; z-index: var(--retro-modal-z); }
+.admin-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+#retro-admin-panel { position: relative; z-index: 4; max-width: 960px; margin: 28px auto 0; }
+.admin-panel-modal {
+  position: relative; z-index: 999;
+  width: min(960px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px); margin: 24px auto; overflow: hidden;
+}
+.admin-panel-titlebar { cursor: default; }
+.admin-panel-body { padding: 8px; }
+.admin-panel-modal .admin-panel-body { max-height: calc(100vh - 100px); overflow: auto; }
+.admin-panel-close-btn { cursor: pointer; padding: 0; }
+.admin-tabs { display: flex; gap: 2px; margin-bottom: 10px; border-bottom: 2px solid var(--win95-dark); }
+.admin-tab {
+  padding: 4px 11px; border-bottom-color: transparent;
+  cursor: pointer; position: relative; bottom: -1px;
+}
+.admin-tab.active { background: #fff; border-bottom-color: #fff; font-weight: bold; }
+.admin-section-title { margin: 12px 0 8px; padding-bottom: 2px; border-bottom: 1px solid #888; font-size: 12px; }
+.admin-field-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 7px; flex-wrap: wrap; font-size: 12px;
+}
+.admin-field-row label { width: 120px; font-weight: bold; }
+.admin-field-row input[type='text'],
+.admin-field-row input[type='number'],
+.admin-field-row select,
+.admin-field-row textarea,
+.admin-inline-fields input,
+.admin-inline-fields select {
+  padding: 3px 4px;
+  border: 1px solid;
+  border-color: var(--win95-dark) var(--win95-light) var(--win95-light) var(--win95-dark);
+  font-size: 12px; font-family: var(--font-ui);
+}
+.admin-field-row textarea { resize: vertical; }
+.admin-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
+.admin-preview-img, .admin-sticker-thumb {
+  width: 72px; height: 72px; object-fit: contain;
+  background: #fff; border: 1px solid #ccc;
+}
+.admin-none { color: #888; font-style: italic; }
+.admin-msg { margin-top: 8px; padding: 6px 8px; font-size: 12px; }
+.admin-msg.success { background: #c8ffc8; border: 1px solid #177517; }
+.admin-msg.error { background: #ffd1d1; border: 1px solid #8f1f1f; }
+.admin-hint { margin-top: 8px; color: #666; font-size: 11px; }
+.admin-sticker-item, .admin-banner-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 4px; border-bottom: 1px dotted #bbb;
+}
+.admin-item-fields { flex: 1; min-width: 0; }
+.admin-inline-fields { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.admin-inline-fields input[type='text'] { min-width: 110px; }
+.admin-inline-fields input[name='alt'],
+.admin-inline-fields input[name='banner_link'] { min-width: 180px; }
+.admin-item-actions { display: flex; flex-direction: column; gap: 6px; }
+.inline-check {
+  display: inline-flex; align-items: center; gap: 4px;
+  width: auto !important; font-weight: normal !important;
+}
+
+/* 에셋 목록 */
+.admin-asset-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 4px; border-bottom: 1px dotted #bbb;
+}
+.admin-asset-thumb {
+  width: 56px; height: 56px; object-fit: contain;
+  background: #fff; border: 1px solid #ccc; flex-shrink: 0;
+}
+.admin-asset-alt {
+  flex: 1; font-size: 12px; color: #444;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+/* 관리자 video 미리보기 */
+video.admin-preview-img {
+  width: 72px; height: 72px; object-fit: contain;
+  background: #000; border: 1px solid #ccc;
+}
+
+/* ══════════════════════════════════════════════
+   크롭 UI
+══════════════════════════════════════════════ */
+#bg-crop-wrapper {
+  position: relative; display: inline-block;
+  max-width: 100%; overflow: hidden;
+  border: 1px solid #999; background: #eee;
+}
+#bg-crop-preview {
+  display: block; max-width: 600px; max-height: 450px;
+  user-select: none; -webkit-user-drag: none;
+}
+#bg-crop-selection {
+  position: absolute;
+  border: 2px dashed #ff0000;
+  background: rgba(255,0,0,.12);
+  pointer-events: none;
+  display: none;
+}
+
+/* ══════════════════════════════════════════════
+   반응형
+══════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  #retro-bg-container {
+    width: calc(100vw - 32px);
+    max-width: 700px;
+    height: auto;
+    min-height: 600px;
+  }
+  #retro-admin-buttons { top: 16px; right: 16px; }
+  .admin-field-grid { grid-template-columns: 1fr; }
+  .admin-field-row label { width: auto; }
+  .admin-sticker-item, .admin-banner-item { flex-direction: column; }
+  .admin-item-actions { flex-direction: row; }
+  .admin-panel-modal { width: calc(100vw - 20px); margin: 10px auto; }
+  .admin-panel-modal .admin-panel-body { max-height: calc(100vh - 84px); }
+}
