@@ -74,15 +74,17 @@
     }
   }
 
-  /* 초기 실행 + 리사이즈 시 재계산 */
-  if (document.querySelectorAll('[data-size-cw]').length) {
-    calcContainerFontSize();
-    var cwResizeTimer = null;
-    $(window).on('resize.cwfont', function () {
-      clearTimeout(cwResizeTimer);
-      cwResizeTimer = setTimeout(calcContainerFontSize, 150);
-    });
-  }
+  /* 초기 실행: DOM ready 후 실행 + 리사이즈 시 재계산 */
+  $(function () {
+    if (document.querySelectorAll('[data-size-cw]').length) {
+      calcContainerFontSize();
+      var cwResizeTimer = null;
+      $(window).on('resize.cwfont', function () {
+        clearTimeout(cwResizeTimer);
+        cwResizeTimer = setTimeout(calcContainerFontSize, 150);
+      });
+    }
+  });
 
   var SKIN_URL = (typeof window.RETRO_SKIN_URL !== 'undefined') ? window.RETRO_SKIN_URL : '';
   var IS_ADMIN = (typeof window.RETRO_IS_ADMIN !== 'undefined') ? window.RETRO_IS_ADMIN : false;
@@ -329,8 +331,8 @@
   var parallaxLayers = $('.parallax-layer');
   if (parallaxLayers.length) {
     var PARALLAX_FACTORS = {
-      'parallax-fg-layer': 0.04,
-      'parallax-ng-layer': 0.025,
+      'parallax-fg-layer': 0.045,
+      'parallax-ng-layer': 0.02,
       'parallax-bg-layer': 0.01
     };
 
@@ -720,7 +722,7 @@
     var formData = new FormData(this);
 
     ajaxPost(SKIN_URL + '/config_update.php', formData, function (data) {
-      var msg = '텍스트 설정이 저장되었습니다.';
+      var msg = '텍스트   정이 저장되었습니다.';
       if (data.dir_writable === false) {
         msg += ' [경고: 저장 디렉토리 쓰기 권한 없음]';
       }
