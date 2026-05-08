@@ -155,7 +155,7 @@ function main_skin_default_config() {
         'latest_boards' => 'free',
 
         /* 윈도우 위치 */
-        'latest_win_top' => 120,
+        'latest_win_top' => 180,
         'latest_win_left' => -260,
         'banner_win_top' => 80,
         'banner_win_left' => 730,
