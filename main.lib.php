@@ -148,6 +148,11 @@ function main_skin_default_config() {
         'bg_image_source_type' => 'url',
         'bg_fit' => 'cover',
 
+        /* 보드 이미지 (배경 이미지보다 뒤, 배경 뒤 텍스트보다 뒤에 표시) */
+        'board_image' => '',
+        'board_image_source_type' => 'url',
+        'board_fit' => 'cover',
+
         /* 레트로 창 */
         'window_title' => '최신글',
         'banner_title' => '배너',
