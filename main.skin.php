@@ -91,6 +91,15 @@ echo main_skin_render_font_preloads();
   <!-- ═══ 배경 이미지 컨테이너 (700×850) ═══ -->
   <div id="retro-bg-container">
 
+    <!-- ── 레이어 -2: 보드 이미지 (배경 이미지와 텍스트의 배경지) ── -->
+    <?php
+    $board_image = isset($main_skin_config['board_image']) ? $main_skin_config['board_image'] : '';
+    $board_fit   = isset($main_skin_config['board_fit']) ? $main_skin_config['board_fit'] : 'cover';
+    $board_fit_class = 'bg-fit-' . $board_fit;
+    if (!empty($board_image)) { ?>
+    <img class="retro-board-media <?php echo $board_fit_class; ?>" src="<?php echo main_skin_esc($board_image); ?>" alt="" loading="lazy" aria-hidden="true">
+    <?php } ?>
+
     <!-- ── 레이어 -1: 배경 뒤 텍스트 (bg_title) ── -->
     <?php
     $bt_content = isset($main_skin_config['text_bg_title']) ? $main_skin_config['text_bg_title'] : '';
@@ -341,6 +350,38 @@ echo main_skin_render_font_preloads();
 
       <!-- ══════════ 배경 이미지 탭 ══════════ -->
       <div class="admin-tab-pane" id="tab-bgimage" style="display:none;">
+
+        <!-- ── 보드 이미지 설정 ── -->
+        <form id="config-board-form" enctype="multipart/form-data">
+          <input type="hidden" name="action" value="update_board">
+          <input type="hidden" name="token" value="<?php echo main_skin_esc($main_skin_token); ?>">
+
+          <h3 class="admin-section-title">보드 이미지 <span class="admin-hint" style="display:inline;">(배경 이미지·텍스트의 배경지 — 가장 뒤에 표시)</span></h3>
+          <div class="admin-field-row">
+            <label>현재 이미지</label>
+            <?php if (!empty($main_skin_config['board_image'])) { ?>
+            <img src="<?php echo main_skin_esc($main_skin_config['board_image']); ?>" class="admin-preview-img" loading="lazy">
+            <?php } else { ?>
+            <span class="admin-none">없음</span>
+            <?php } ?>
+            <?php if (!empty($main_skin_config['board_image'])) { ?>
+            <button type="button" class="win95-action-btn" id="board-del-btn">삭제</button>
+            <?php } ?>
+          </div>
+          <div class="admin-field-row"><label>이미지 URL</label><input type="text" name="board_url" value="<?php echo main_skin_esc($main_skin_config['board_image']); ?>" style="width:320px;"></div>
+          <div class="admin-field-row"><label>업로드</label><input type="file" name="board_file" accept="image/*"></div>
+          <div class="admin-field-row">
+            <label>표시 방식</label>
+            <select name="board_fit">
+              <option value="cover"<?php echo $main_skin_config['board_fit'] === 'cover' ? ' selected' : ''; ?>>영역에 맞춰 늘이기 (cover)</option>
+              <option value="contain"<?php echo $main_skin_config['board_fit'] === 'contain' ? ' selected' : ''; ?>>비율 맞춰 자르기 (contain)</option>
+              <option value="original"<?php echo $main_skin_config['board_fit'] === 'original' ? ' selected' : ''; ?>>원래 크기 (original)</option>
+            </select>
+          </div>
+          <div class="admin-field-row"><label></label><button type="submit" class="win95-action-btn">보드 이미지 저장</button></div>
+        </form>
+        <div id="config-board-msg" class="admin-msg" style="display:none;"></div>
+
         <form id="config-bg-form" enctype="multipart/form-data">
           <input type="hidden" name="action" value="update_bg">
           <input type="hidden" name="token" value="<?php echo main_skin_esc($main_skin_token); ?>">

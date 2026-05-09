@@ -102,6 +102,60 @@ switch ($action) {
         break;
 
     /* ══════════════════════════════════════════════
+       보드 이미지
+    ══════════════════════════════════════════════ */
+    case 'update_board':
+        $old_board_image = isset($config['board_image']) ? $config['board_image'] : '';
+        $old_board_src   = isset($config['board_image_source_type']) ? $config['board_image_source_type'] : 'url';
+        $new_board_image = $old_board_image;
+        $new_board_src   = $old_board_src;
+
+        if (isset($_FILES['board_file']) && $_FILES['board_file']['error'] === UPLOAD_ERR_OK) {
+            $uploaded = main_skin_upload_image($_FILES['board_file'], 'background', 'board');
+            if ($uploaded !== false) {
+                if (!empty($old_board_image) && $old_board_src === 'file') {
+                    main_skin_delete_uploaded_asset($old_board_image, 'background');
+                }
+                $new_board_image = $uploaded;
+                $new_board_src   = 'file';
+            }
+        } elseif (isset($_POST['board_url'])) {
+            $url = main_skin_image_url(trim($_POST['board_url']));
+            if ($url !== $old_board_image) {
+                if (!empty($old_board_image) && $old_board_src === 'file') {
+                    main_skin_delete_uploaded_asset($old_board_image, 'background');
+                }
+                $new_board_image = $url;
+                $new_board_src   = 'url';
+            }
+        }
+
+        $config['board_image']             = $new_board_image;
+        $config['board_image_source_type'] = $new_board_src;
+
+        $valid_fit = array('cover', 'contain', 'original');
+        $board_fit = isset($_POST['board_fit']) ? $_POST['board_fit'] : 'cover';
+        $config['board_fit'] = in_array($board_fit, $valid_fit) ? $board_fit : 'cover';
+
+        if (!save_main_skin_config($config)) {
+            main_skin_json_error('보드 이미지 저장에 실패했습니다.');
+        }
+        main_skin_json_ok(array());
+        break;
+
+    case 'delete_board':
+        if (!empty($config['board_image']) && isset($config['board_image_source_type']) && $config['board_image_source_type'] === 'file') {
+            main_skin_delete_uploaded_asset($config['board_image'], 'background');
+        }
+        $config['board_image']             = '';
+        $config['board_image_source_type'] = 'url';
+        if (!save_main_skin_config($config)) {
+            main_skin_json_error('보드 이미지 삭제에 실패했습니다.');
+        }
+        main_skin_json_ok(array());
+        break;
+
+    /* ══════════════════════════════════════════════
        텍스트 오버레이
     ══════════════════════════════════════════════ */
     case 'update_texts':

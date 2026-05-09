@@ -715,6 +715,25 @@
   });
 
   /* ══════════════════════════════════════════════
+     보드 이미지
+  ══════════════════════════════════════════════ */
+  $('#config-board-form').on('submit', function (e) {
+    e.preventDefault();
+    ajaxPost(SKIN_URL + '/config_update.php', new FormData(this), function () {
+      showMsg('#config-board-msg', '보드 이미지가 저장되었습니다.', true); reloadSoon();
+    }, function (msg) { showMsg('#config-board-msg', msg, false); });
+  });
+
+  $('#board-del-btn').on('click', function () {
+    if (!window.confirm('보드 이미지를 삭제하시겠습니까?')) return;
+    var fd = new FormData();
+    fd.append('action', 'delete_board'); fd.append('token', TOKEN);
+    ajaxPost(SKIN_URL + '/config_update.php', fd, function () {
+      showMsg('#config-board-msg', '보드 이미지가 삭제되었습니다.', true); reloadSoon();
+    }, function (msg) { showMsg('#config-board-msg', msg, false); });
+  });
+
+  /* ══════════════════════════════════════════════
      텍스트 오버레이 설정 저장
   ══════════════════════════════════════════════ */
   $('#config-text-form').on('submit', function (e) {
